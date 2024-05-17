@@ -18,6 +18,10 @@ interface iMyAccountExtension
 	 */
 	public function GetSectionParams(): array;
 
+	/**
+	 * Get the absolute path to the directory containing the templates for this extension
+	 * @return string  the absolute path to the directory containing the templates for this extension
+	 */
 	public function GetTemplatePath(): string;
 
 }
