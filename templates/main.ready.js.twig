@@ -2,7 +2,7 @@
 {# @license     http://opensource.org/licenses/AGPL-3.0 #}
 
 {% for Section in Params.aSections %}
-	{% if Section.sJsTwig %}
-		{% include Section.sJsTwig %}
+	{% if Section.sReadyJsTwig %}
+		{% include Section.sReadyJsTwig %}
 	{% endif %}
 {% endfor %}

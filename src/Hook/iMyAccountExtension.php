@@ -12,7 +12,7 @@ interface iMyAccountExtension
 	 * Get the parameters to be passed to the MyAccount screen
 	 *
 	 * @return array contains 'sHtmlTwig' => the path to the HTML twig section for this extension (extension-name/templates/file.html.twig)
-	 *                        'sJsTwig' => the path to the JS twig section for this extension
+	 *                        'sReadyJsTwig' => the path to the JS twig section for this extension
 	 * and all other parameters that the extension needs to render its content,
 	 * they will arrive in the templates as "Section" variable
 	 */
