@@ -2,28 +2,15 @@
 
 namespace Combodo\iTop\MyAccount\Controller;
 
-use AjaxPage;
-use Combodo\iTop\Application\Helper\Session;
 use Combodo\iTop\Application\TwigBase\Controller\Controller;
-use Combodo\iTop\Application\UI\Base\Component\Button\Button;
-use Combodo\iTop\Application\UI\Base\Component\Button\ButtonUIBlockFactory;
-use Combodo\iTop\Application\UI\Base\Component\DataTable\StaticTable\FormTable\FormTable;
-use Combodo\iTop\Application\UI\Base\Component\DataTable\StaticTable\FormTableRow\FormTableRow;
 use Combodo\iTop\Application\UI\Base\Component\Panel\Panel;
-use Combodo\iTop\Application\UI\Base\Component\Toolbar\Toolbar;
-use Combodo\iTop\Application\UI\Base\Component\Toolbar\ToolbarUIBlockFactory;
 use Combodo\iTop\Application\UI\Base\Layout\Object\ObjectDetails;
 use Combodo\iTop\Application\UI\Base\Layout\TabContainer\TabContainer;
 use Combodo\iTop\Application\UI\Base\UIBlock;
-use Combodo\iTop\AuthentToken\Helper\TokenAuthHelper;
-use Combodo\iTop\AuthentToken\Helper\TokenAuthLog;
 use Combodo\iTop\MyAccount\Helper\MyAccountHelper;
+use Combodo\iTop\MyAccount\Hook\iMyAccountAjaxTabExtension;
 use Combodo\iTop\MyAccount\Hook\iMyAccountExtension;
-use Combodo\iTop\Renderer\BlockRenderer;
 use DBObject;
-use DBObjectSearch;
-use DBObjectSet;
-use Dict;
 use MetaModel;
 use UserRights;
 use utils;
@@ -39,6 +26,22 @@ class MyAccountController extends Controller
 	public const ROUTE_NAMESPACE = MyAccountHelper::ROUTE_NAMESPACE;
 
 	public function OperationMainPage()
+	{
+		$sUserInfoUrl = utils::GetAbsoluteUrlModulePage(MyAccountHelper::MODULE_NAME, 'index.php', ['operation' => 'UserInfo']);
+		$this->AddAjaxTab('combodo-my-account/Operation:MainPage/Title', $sUserInfoUrl);
+
+		foreach (utils::GetClassesForInterface(iMyAccountAjaxTabExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
+			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountAjaxTabExtension $oExtension */
+			$oExtension = new $sExtensionClass();
+			if ($oExtension->IsTabPresent()) {
+				$this->AddAjaxTab($oExtension->GetAjaxTabCode(), $oExtension->GetAjaxTabUrl(), $oExtension->GetAjaxTabIsCached(), $oExtension->GetAjaxTabLabel());
+			}
+		}
+
+		$this->DisplayPage([]);
+	}
+
+	public function OperationUserInfo()
 	{
 		$aParams = [];
 		/** @var \User $oUser */
@@ -87,7 +90,7 @@ class MyAccountController extends Controller
 
 		$aParams['aSections'] = $aSections;
 
-		$this->DisplayPage(['Params' => $aParams], 'main');
+		$this->DisplayAjaxPage(['Params' => $aParams]);
 	}
 
 	private function GetEditLink(DBObject $oObject): ?string

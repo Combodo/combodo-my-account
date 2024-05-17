@@ -9,6 +9,7 @@ return array(
     'Combodo\\iTop\\MyAccount\\Controller\\MyAccountController' => $baseDir . '/src/Controller/MyAccountController.php',
     'Combodo\\iTop\\MyAccount\\Helper\\MyAccountHelper' => $baseDir . '/src/Helper/MyAccountHelper.php',
     'Combodo\\iTop\\MyAccount\\Hook\\MyAccountPopupMenuExtension' => $baseDir . '/src/Hook/MyAccountPopupMenuExtension.php',
+    'Combodo\\iTop\\MyAccount\\Hook\\iMyAccountAjaxTabExtension' => $baseDir . '/src/Hook/iMyAccountAjaxTabExtension.php',
     'Combodo\\iTop\\MyAccount\\Hook\\iMyAccountExtension' => $baseDir . '/src/Hook/iMyAccountExtension.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
 );
