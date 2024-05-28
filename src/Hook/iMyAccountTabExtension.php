@@ -10,7 +10,7 @@ namespace Combodo\iTop\MyAccount\Hook;
  * Interface iMyAccountAjaxTabExtension
  * Define extensibility point to MyAccount screen
  */
-interface iMyAccountAjaxTabExtension
+interface iMyAccountTabExtension
 {
 	/**
 	 * True if the tab must be displayed or false if the tab must be hidden.
@@ -21,30 +21,30 @@ interface iMyAccountAjaxTabExtension
 	public function IsTabPresent(): bool;
 
 	/**
+	 * Rank of the tab to allow sorting
+	 *
+	 * @return float order rank
+	 */
+	public function GetTabRank(): float;
+
+	/**
 	 * Unique code for the AjaxTab
 	 *
 	 * @return string
 	 */
-	public function GetAjaxTabCode(): string;
-
-	/**
-	 * URL to the content of the tab
-	 *
-	 * @return string
-	 */
-	public function GetAjaxTabUrl(): string;
+	public function GetTabCode(): string;
 
 	/**
 	 * True if the tab is cached or false if the tab must be reloaded each time the user click on it
 	 *
 	 * @return bool
 	 */
-	public function GetAjaxTabIsCached(): bool;
+	public function GetTabIsCached(): bool;
 
 	/**
 	 * Label of the tab
 	 *
 	 * @return string
 	 */
-	public function GetAjaxTabLabel(): string;
+	public function GetTabLabel(): string;
 }

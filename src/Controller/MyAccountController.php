@@ -8,11 +8,8 @@ use Combodo\iTop\Application\UI\Base\Layout\Object\ObjectDetails;
 use Combodo\iTop\Application\UI\Base\Layout\TabContainer\TabContainer;
 use Combodo\iTop\Application\UI\Base\UIBlock;
 use Combodo\iTop\MyAccount\Helper\MyAccountHelper;
-use Combodo\iTop\MyAccount\Hook\iMyAccountAjaxTabExtension;
-use Combodo\iTop\MyAccount\Hook\iMyAccountExtension;
-use DBObject;
-use MetaModel;
-use UserRights;
+use Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension;
+use Combodo\iTop\MyAccount\Hook\iMyAccountTabExtension;
 use utils;
 use const ITOP_DESIGN_LATEST_VERSION;
 
@@ -27,31 +24,37 @@ class MyAccountController extends Controller
 
 	public function OperationMainPage()
 	{
-		$sUserInfoUrl = utils::GetAbsoluteUrlModulePage(MyAccountHelper::MODULE_NAME, 'index.php', ['operation' => 'UserInfo']);
-		$this->AddAjaxTab('combodo-my-account/Operation:MainPage/Title', $sUserInfoUrl);
+		$aTabs = [];
 
-		foreach (utils::GetClassesForInterface(iMyAccountAjaxTabExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
-			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountAjaxTabExtension $oExtension */
+		// Display the tabs
+		foreach (utils::GetClassesForInterface(iMyAccountTabExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
+			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountTabExtension $oExtension */
 			$oExtension = new $sExtensionClass();
 			if ($oExtension->IsTabPresent()) {
-				$this->AddAjaxTab($oExtension->GetAjaxTabCode(), $oExtension->GetAjaxTabUrl(), $oExtension->GetAjaxTabIsCached(), $oExtension->GetAjaxTabLabel());
+				$aTabs[] = [
+					'code' => $oExtension->GetTabCode(),
+					'url' => utils::GetAbsoluteUrlModulePage(MyAccountHelper::MODULE_NAME, 'index.php', ['operation' => 'MyAccountTab', 'tab' => $oExtension->GetTabCode()]),
+					'is_cached' => $oExtension->GetTabIsCached(),
+					'label' => $oExtension->GetTabLabel(),
+					'rank' => $oExtension->GetTabRank(),
+				];
 			}
 		}
 
-		$this->DisplayPage([]);
-	}
+		usort($aTabs, function($a, $b) {
+			$fRankA = $a['rank'];
+			$fRankB = $b['rank'];
+			if ($fRankA == $fRankB) {
+				return 0;
+			}
+			return ($fRankA < $fRankB) ? -1 : 1;
+		});
 
-	public function OperationUserInfo()
-	{
-		$aParams = [];
-		/** @var \User $oUser */
-		$oUser = UserRights::GetUserObject();
-
-		$this->ProvideHtmlUserInfo($oUser, $aParams);
-		$this->ProvideHtmlContactInfo($oUser, $aParams);
+		foreach ($aTabs as $aTab) {
+			$this->AddAjaxTab($aTab['code'], $aTab['url'], $aTab['is_cached'], $aTab['label']);
+		}
 
 		//adding all below js. some in order to avoid a js console error. which is not functional even when displaying token forms
-
 		if (version_compare(ITOP_DESIGN_LATEST_VERSION, '3.2', '<')) { // N°7251 iTop 3.2.0 deprecated lib
 			$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/json.js');
 		}
@@ -80,97 +83,41 @@ class MyAccountController extends Controller
 			}
 		}
 
+		$this->DisplayPage([]);
+	}
+
+	public function OperationMyAccountTab()
+	{
+		$aParams = [];
+		$sTabCode = utils::ReadParam('tab', '', false, utils::ENUM_SANITIZATION_FILTER_STRING);
+
 		$aSections = [];
 
-		foreach (utils::GetClassesForInterface(iMyAccountExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
-			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountExtension $oExtension */
+		foreach (utils::GetClassesForInterface(iMyAccountSectionExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
+			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension $oExtension */
 			$oExtension = new $sExtensionClass();
-			$aSections[] = $oExtension->GetSectionParams();
+			if ($sTabCode !== $oExtension->GetTabCode()) {
+				continue;
+			}
+			$sName = $oExtension->GetTemplateName();
+			$aSectionParams = call_user_func($oExtension->GetSectionCallback());
+			$aSectionParams['sHtmlTwig'] = "$sName.html.twig";
+			$aSectionParams['sReadyJsTwig'] = "$sName.ready.js.twig";
+			$aSectionParams['rank'] = $oExtension->GetSectionRank();
+			$aSections[] = $aSectionParams;
 		}
+
+		usort($aSections, function($a, $b) {
+			$fRankA = $a['rank'];
+			$fRankB = $b['rank'];
+			if ($fRankA == $fRankB) {
+				return 0;
+			}
+			return ($fRankA < $fRankB) ? -1 : 1;
+		});
 
 		$aParams['aSections'] = $aSections;
 
-		$this->DisplayAjaxPage(['Params' => $aParams]);
+		$this->DisplayAjaxPage($aParams);
 	}
-
-	private function GetEditLink(DBObject $oObject): ?string
-	{
-		$sClass = get_class($oObject);
-		if (\UserRights::IsActionAllowed($sClass, UR_ACTION_MODIFY, \DBObjectSet::FromObject($oObject)) != UR_ALLOWED_YES) {
-			return false;
-		}
-
-		return sprintf("%spages/UI.php?operation=modify&class=%s&id=%s",
-			utils::GetAbsoluteUrlAppRoot(), $sClass, $oObject->GetKey());
-	}
-
-	public function ProvideHtmlUserInfo(\User $oUser, &$aParams): void
-	{
-		if (is_null($oUser)) {
-			return;
-		}
-
-		$aParams['user_link'] = $this->GetEditLink($oUser);
-
-		$oProfileSet = $oUser->Get('profile_list');
-		$aProfiles = [];
-		while (($oProfile = $oProfileSet->Fetch()) != null) {
-			$aProfiles[] = $oProfile->GetAsHTML('profile');
-		}
-		$sProfileListHtml = implode('<BR>', $aProfiles);
-
-		$oAllowedOrgList = $oUser->Get('allowed_org_list');
-		$aAllowedOrgs = [];
-		while (($oUserOrg = $oAllowedOrgList->Fetch()) != null) {
-			$aAllowedOrgs[] = $oUserOrg->GetAsHTML('allowed_org_name');
-		}
-		$sAllowedOrgHtml = implode('<BR>', $aAllowedOrgs);
-
-		$aUserInfo = [
-			'login' => null,
-			'profile_list' => $sProfileListHtml,
-			'org_id' => null,
-			'allowed_org_list' => $sAllowedOrgHtml,
-		];
-
-		$this->ConvertToHtml($aParams, $aUserInfo, 'user', $oUser);
-	}
-
-	public function ProvideHtmlContactInfo(\User $oUser, &$aParams): void
-	{
-		if (is_null($oUser)) {
-			return;
-		}
-
-		$iPersonId = $oUser->Get('contactid');
-		if (0 === $iPersonId) {
-			return;
-		}
-
-		$oPerson = MetaModel::GetObject('Person', $iPersonId);
-
-		$aParams['contact_link'] = $this->GetEditLink($oPerson);
-		$aContactInfo = [
-			'first_name' => null,
-			'name' => null,
-			'email' => null,
-			'phone' => null,
-			'location_name' => null,
-		];
-
-		$aParams['contact']['picture'] = UserRights::GetUserPictureAbsUrl($oUser->Get('login'));//$oPerson->GetAsHTML('picture');
-		$this->ConvertToHtml($aParams, $aContactInfo, 'contact', $oPerson);
-	}
-
-	public function ConvertToHtml(&$aParams, $aData, $sKey, DBObject $oObject)
-	{
-		foreach ($aData as $sAttCode => $sAttHtml) {
-			if ($sAttHtml) {
-				$aParams[$sKey][MetaModel::GetLabel(get_class($oObject), $sAttCode)] = $sAttHtml;
-			} else {
-				$aParams[$sKey][MetaModel::GetLabel(get_class($oObject), $sAttCode)] = $oObject->GetAsHTML($sAttCode);
-			}
-		}
-	}
-
 }
