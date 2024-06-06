@@ -9,6 +9,12 @@ namespace Combodo\iTop\MyAccount\Hook;
 interface iMyAccountSectionExtension
 {
 	/**
+	 * Indicates if the extension is active or not
+	 * @return bool
+	 */
+	public function IsActive(): bool;
+
+	/**
 	 * Get the absolute path to the directory containing the templates for this extension
 	 * @return string  the absolute path to the directory containing the templates for this extension
 	 */
