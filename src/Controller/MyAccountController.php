@@ -10,7 +10,9 @@ use Combodo\iTop\Application\UI\Base\UIBlock;
 use Combodo\iTop\MyAccount\Helper\MyAccountHelper;
 use Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension;
 use Combodo\iTop\MyAccount\Hook\iMyAccountTabExtension;
+use Combodo\iTop\Service\InterfaceDiscovery\InterfaceDiscovery;
 use utils;
+use function Combodo\iTop\Service\InterfaceDiscovery\InterfaceDiscovery;
 use const ITOP_DESIGN_LATEST_VERSION;
 
 /**
@@ -90,7 +92,7 @@ class MyAccountController extends Controller
 
 		$aSections = [];
 
-		foreach (utils::GetClassesForInterface(iMyAccountSectionExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
+		foreach (InterfaceDiscovery::GetInstance()->FindItopClasses(iMyAccountSectionExtension::class) as $sExtensionClass) {
 			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension $oExtension */
 			$oExtension = new $sExtensionClass();
 			if ($sTabCode !== $oExtension->GetTabCode()) {
