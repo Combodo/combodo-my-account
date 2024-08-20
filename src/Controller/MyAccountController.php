@@ -29,7 +29,7 @@ class MyAccountController extends Controller
 		$aTabs = [];
 
 		// Display the tabs
-		foreach (utils::GetClassesForInterface(iMyAccountTabExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
+		foreach (InterfaceDiscovery::GetInstance()->FindItopClasses(iMyAccountTabExtension::class) as $sExtensionClass) {
 			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountTabExtension $oExtension */
 			$oExtension = new $sExtensionClass();
 			if ($oExtension->IsTabPresent()) {
