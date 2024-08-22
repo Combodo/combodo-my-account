@@ -6,7 +6,7 @@
  * @license     http://opensource.org/licenses/AGPL-3.0
  */
 
-Dict::Add('EN US', 'English', 'English', array(
+Dict::Add('FR FR', 'French', 'French', array(
 	'UI:MyAccount' => 'My Account',
 	'combodo-my-account/Operation:MainPage/Title' => 'My Account',
 ));
