@@ -18,7 +18,7 @@ SetupWebPage::AddModule(
 			'itop-welcome-itil/3.2.0||itop-structure/3.2.0',
 		),
 		'mandatory' => true,
-		'visible' => true,
+		'visible' => false,
 
 		// Components
 		//
