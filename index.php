@@ -6,14 +6,14 @@
 
 use Combodo\iTop\MyAccount\Controller\MyAccountController;
 use Combodo\iTop\MyAccount\Helper\MyAccountHelper;
-use Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension;
+use Combodo\iTop\MyAccount\Hook\iMyAccountTabContentExtension;
 
 require_once(APPROOT.'application/startup.inc.php');
 
 // Get the additional paths
 $aAdditionalPaths = [];
-foreach (utils::GetClassesForInterface(iMyAccountSectionExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
-	/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension $oExtension */
+foreach (utils::GetClassesForInterface(iMyAccountTabContentExtension::class, '', ['[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]', '[\\\\/]tests[\\\\/]']) as $sExtensionClass) {
+	/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountTabContentExtension $oExtension */
 	$oExtension = new $sExtensionClass();
 	$aAdditionalPaths[] = $oExtension->GetTemplatePath();
 }

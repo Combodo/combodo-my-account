@@ -24,7 +24,7 @@ class ComposerStaticInitb7042ee213975f968727baf03dc1b879
         'Combodo\\iTop\\MyAccount\\Controller\\MyAccountController' => __DIR__ . '/../..' . '/src/Controller/MyAccountController.php',
         'Combodo\\iTop\\MyAccount\\Helper\\MyAccountHelper' => __DIR__ . '/../..' . '/src/Helper/MyAccountHelper.php',
         'Combodo\\iTop\\MyAccount\\Hook\\MyAccountPopupMenuExtension' => __DIR__ . '/../..' . '/src/Hook/MyAccountPopupMenuExtension.php',
-        'Combodo\\iTop\\MyAccount\\Hook\\iMyAccountSectionExtension' => __DIR__ . '/../..' . '/src/Hook/iMyAccountSectionExtension.php',
+        'Combodo\\iTop\\MyAccount\\Hook\\iMyAccountTabContentExtension' => __DIR__ . '/../..' . '/src/Hook/iMyAccountTabContentExtension.php',
         'Combodo\\iTop\\MyAccount\\Hook\\iMyAccountTabExtension' => __DIR__ . '/../..' . '/src/Hook/iMyAccountTabExtension.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );

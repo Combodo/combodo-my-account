@@ -8,7 +8,7 @@ use Combodo\iTop\Application\UI\Base\Layout\Object\ObjectDetails;
 use Combodo\iTop\Application\UI\Base\Layout\TabContainer\TabContainer;
 use Combodo\iTop\Application\UI\Base\UIBlock;
 use Combodo\iTop\MyAccount\Helper\MyAccountHelper;
-use Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension;
+use Combodo\iTop\MyAccount\Hook\iMyAccountTabContentExtension;
 use Combodo\iTop\MyAccount\Hook\iMyAccountTabExtension;
 use Combodo\iTop\Service\InterfaceDiscovery\InterfaceDiscovery;
 use utils;
@@ -92,8 +92,8 @@ class MyAccountController extends Controller
 
 		$aSections = [];
 
-		foreach (InterfaceDiscovery::GetInstance()->FindItopClasses(iMyAccountSectionExtension::class) as $sExtensionClass) {
-			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountSectionExtension $oExtension */
+		foreach (InterfaceDiscovery::GetInstance()->FindItopClasses(iMyAccountTabContentExtension::class) as $sExtensionClass) {
+			/** @var \Combodo\iTop\MyAccount\Hook\iMyAccountTabContentExtension $oExtension */
 			$oExtension = new $sExtensionClass();
 			if ($sTabCode !== $oExtension->GetTabCode()) {
 				continue;

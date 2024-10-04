@@ -6,7 +6,7 @@
 
 namespace Combodo\iTop\MyAccount\Hook;
 
-interface iMyAccountSectionExtension
+interface iMyAccountTabContentExtension
 {
 	/**
 	 * Indicates if the extension is active or not
