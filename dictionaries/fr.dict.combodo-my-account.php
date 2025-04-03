@@ -7,6 +7,6 @@
  */
 
 Dict::Add('FR FR', 'French', 'Français', array(
-	'UI:MyAccount' => 'My Account',
-	'combodo-my-account/Operation:MainPage/Title' => 'My Account',
+	'UI:MyAccount' => 'Mon compte',
+	'combodo-my-account/Operation:MainPage/Title' => 'Mon compte',
 ));
