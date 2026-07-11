@@ -12,8 +12,8 @@ use Combodo\iTop\MyAccount\Hook\iMyAccountTabContentExtension;
 use Combodo\iTop\MyAccount\Hook\iMyAccountTabExtension;
 use Combodo\iTop\Service\InterfaceDiscovery\InterfaceDiscovery;
 use utils;
+
 use function Combodo\iTop\Service\InterfaceDiscovery\InterfaceDiscovery;
-use const ITOP_DESIGN_LATEST_VERSION;
 
 /**
  * PersonalToken objects are protected and writable only as Administrator
@@ -43,7 +43,7 @@ class MyAccountController extends Controller
 			}
 		}
 
-		usort($aTabs, function($a, $b) {
+		usort($aTabs, function ($a, $b) {
 			$fRankA = $a['rank'];
 			$fRankB = $b['rank'];
 			if ($fRankA == $fRankB) {
@@ -62,7 +62,6 @@ class MyAccountController extends Controller
 		}
 		$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/forms-json-utils.js');
 		$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/wizardhelper.js');
-		$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/wizard.utils.js');
 		$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/jquery.blockUI.js');
 
 		foreach (TabContainer::DEFAULT_JS_FILES_REL_PATH as $sJsFile) {
@@ -106,7 +105,7 @@ class MyAccountController extends Controller
 			$aSections[] = $aSectionParams;
 		}
 
-		usort($aSections, function($a, $b) {
+		usort($aSections, function ($a, $b) {
 			$fRankA = $a['rank'];
 			$fRankB = $b['rank'];
 			if ($fRankA == $fRankB) {
