@@ -57,9 +57,6 @@ class MyAccountController extends Controller
 		}
 
 		//adding all below js. some in order to avoid a js console error. which is not functional even when displaying token forms
-		if (version_compare(ITOP_DESIGN_LATEST_VERSION, '3.2', '<')) { // N°7251 iTop 3.2.0 deprecated lib
-			$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/json.js');
-		}
 		$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/forms-json-utils.js');
 		$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/wizardhelper.js');
 		$this->AddLinkedScript(utils::GetAbsoluteUrlAppRoot().'js/jquery.blockUI.js');
